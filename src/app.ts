@@ -1,13 +1,26 @@
 // src/index.ts
 import express from 'express';
+import 'dotenv/config'
+import { PORT } from './settings'
+import uploadFile from './routes/upload'
+import conversation from './routes/conversation'
+import cors from 'cors';
+import { fileCache, attachCache, attachModel } from './utility';
+
+
+const globalFileCache = fileCache();
 
 const app = express();
-const port = 3000;
 
-app.get('/', (req, res) => {
-  res.send('Hello, TypeScript with Express!');
-});
+app.use(express.json());
+app.use(cors());
+app.use(attachCache(globalFileCache))
+app.use(attachModel())
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+
+app.use("/upload", uploadFile)
+app.use("/conversation", conversation)
+
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}`);
 });
