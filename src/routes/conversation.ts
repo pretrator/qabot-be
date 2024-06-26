@@ -12,7 +12,6 @@ const router = Router()
 router.get('/get', (req: any, res) => {
     const globalCache = req[GLOBAL_CACHE_KEY];
     const values = lodash.values(globalCache.cache);
-    console.log(values)
     const nameConvIDMap = values.map(fileData => ({ fileName: fileData.fileName, conversationId: fileData.conversationId }))
     res.send(nameConvIDMap)
 })
@@ -20,7 +19,6 @@ router.get('/get', (req: any, res) => {
 router.post("/query", async (req: any, res) => {
     const { conversationId, query } = req.body;
     const fileObj = req[GLOBAL_CACHE_KEY].get(conversationId);
-    console.log(req[GLOBAL_CACHE_KEY], fileObj, conversationId, req.body)
     const { processedPart } = fileObj
 
     const vectorstore = await MemoryVectorStore.fromDocuments(
@@ -38,20 +36,18 @@ router.post("/query", async (req: any, res) => {
     const model = req[MODEL_KEY] 
     const questionAnswerChain = await createStuffDocumentsChain({ llm: model, prompt });
     const ragChain = await createRetrievalChain({
-        retriever,
-        combineDocsChain: questionAnswerChain,
-      });
+        retriever, 
+        combineDocsChain: questionAnswerChain 
+    });
 
-    const ansStream: any = await ragChain.stream({
-        input: query,
-      });
+    const ansStream: any = await ragChain.stream({ input: query });
     
     for await (const chunk of ansStream) {
-        console.log(chunk)
         if(chunk.answer){
             res.write(JSON.stringify(chunk.answer))
         }
-      }
+    }
+
     res.end()
 })
 

@@ -9,3 +9,5 @@ export const SYSTEM_TEMPLATE = [
     `\n\n`,
     `{context}`,
   ].join("");
+export const FILE_SPLIT_CHAR_DOT = "."
+export const SAY_HI = "Hi, You are at root of QA BOT BE";
