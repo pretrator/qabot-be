@@ -6,6 +6,8 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { createRetrievalChain } from "langchain/chains/retrieval";
 import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
+import { validator } from '../validators';
+import { bodyValidator } from '../utility';
 
 const router = Router()
 
@@ -16,7 +18,7 @@ router.get('/get', (req: any, res) => {
     res.send(nameConvIDMap)
 })
 
-router.post("/query", async (req: any, res) => {
+router.post("/query", bodyValidator(validator.query), async (req: any, res) => {
     const { conversationId, query } = req.body;
     const fileObj = req[GLOBAL_CACHE_KEY].get(conversationId);
     const { processedPart } = fileObj

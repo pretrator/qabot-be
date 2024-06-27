@@ -40,7 +40,7 @@ router.post('/uploadFile', upload.single('file'), async (req: any, res) => {
   }
   req[GLOBAL_CACHE_KEY].set(filename, fileObj)
   
-  // Delete the file Need to rethink to a in memory way as this takes IO to complete
+  // Delete the file. Need to rethink to a in memory way as this takes IO to complete the request
   fs.unlink(path, (err) => {
     if (err) {
       console.error('Error deleting file:', err);
